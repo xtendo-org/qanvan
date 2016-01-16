@@ -39,11 +39,18 @@ def card_lists(board_id):
     # 이 보드에 있는 모든 카드리스트의 목록을 반환합니다.
     # request.method == 'GET'
     return jsonify(result=[
-        row[0] for row in db.session.query(CardList.name)
+        dict(zip(row.keys(), row)) for row in
+        db.session.query(
+            CardList.id,
+            db.func.coalesce(CardList.priority, CardList.id)
+            .label('priority'),
+            CardList.name,
+        )
         .filter_by(board_id=board_id)
         # 정렬 순서는 priority 값이 있으면 그것을 우선으로,
         # 없으면 primary key를 씁니다.
-        .order_by(db.func.coalesce(CardList.priority, CardList.id))])
+        .order_by(db.func.coalesce(CardList.priority, CardList.id))
+    ])
 
 
 @app.route('/list/<list_id>', methods=['GET', 'POST'])
