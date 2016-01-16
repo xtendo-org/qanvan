@@ -23,7 +23,13 @@ def boards():
         return jsonify(result='ok')
     # 모든 보드의 목록을 반환합니다.
     # request.method == 'GET'
-    return jsonify(result=[row[0] for row in db.session.query(Board.name)])
+    return jsonify(result=[
+        dict(zip(row.keys(), row)) for row in
+        db.session.query(
+            Board.id,
+            Board.name,
+        )
+    ])
 
 
 @app.route('/board/<board_id>', methods=['GET', 'POST'])
