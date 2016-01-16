@@ -1,1 +1,5 @@
+# SQLALchemy 설정 문자열을 넣습니다.
+# 예시: 'postgresql://scott:tiger@localhost:5432/mydatabase'
+# PostgreSQL의 경우, 다른 설정을 생략하고 데이터베이스 이름만 넣으면 자동으로
+# 유닉스 사용자로 인증하고, 유닉스 소켓으로 접속하게 됩니다.
 database = 'postgresql:///qanvan'
