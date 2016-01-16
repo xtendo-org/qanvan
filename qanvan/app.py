@@ -11,7 +11,7 @@ def hello():
     return 'Hello World!'
 
 
-@app.route('/list', methods=['POST'])
+@app.route('/list', methods=['GET', 'POST'])
 def list():
     if request.method == 'POST':
         # 새로운 카드리스트를 만듭니다.
@@ -23,4 +23,6 @@ def list():
         db.session.add(cardList)
         db.session.commit()
         return jsonify(result='ok')
-    # TODO: request.method == 'GET'
+    # 모든 카드리스트의 목록을 반환합니다.
+    # request.method == 'GET'
+    return jsonify(result=[row[0] for row in db.session.query(CardList.name)])
