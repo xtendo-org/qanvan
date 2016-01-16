@@ -20,6 +20,8 @@ class CardList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     priority = db.Column(db.Integer, index=True, nullable=True)
     name = db.Column(db.String(80), unique=True, index=True)
+    is_deleted = db.Column(db.Boolean, default=False)
+    is_archived = db.Column(db.Boolean, default=False)
 
     board_id = db.Column(db.Integer, db.ForeignKey('board.id'))
 
@@ -37,6 +39,8 @@ class Card(db.Model):
     priority = db.Column(db.Integer, index=True, nullable=True)
     title = db.Column(db.String(80))
     content = db.Column(db.Text)
+    is_deleted = db.Column(db.Boolean, default=False)
+    is_archived = db.Column(db.Boolean, default=False)
 
     card_list_id = db.Column(db.Integer, db.ForeignKey('card_list.id'))
 
