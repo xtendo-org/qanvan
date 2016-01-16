@@ -10,4 +10,5 @@ if __name__ == '__main__':
     # TODO: 디버그/프로덕션 구분하기. WSGI로 포장하기
     with app.app_context():
         db.create_all()
+    app.config['DEBUG'] = True
     app.run(host='0.0.0.0')
