@@ -1,18 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from werkzeug.exceptions import BadRequest
 from qanvan.models import db, Board, CardList, Card
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
+
+blueprint = Blueprint('views', __name__)
 
 
-@app.route('/')
+@blueprint.route('/')
 def hello():
-    return 'Hello World!'
+    return render_template('index.html')
 
 
-@app.route('/board', methods=['GET', 'POST'])
+@blueprint.route('/board', methods=['GET', 'POST'])
 def boards():
     if request.method == 'POST':
         # 새로운 보드를 만듭니다.
@@ -32,7 +31,7 @@ def boards():
     ])
 
 
-@app.route('/board/<board_id>', methods=['GET', 'POST'])
+@blueprint.route('/board/<board_id>', methods=['GET', 'POST'])
 def card_lists(board_id):
     if request.method == 'POST':
         # 새로운 카드리스트를 만듭니다.
@@ -59,7 +58,7 @@ def card_lists(board_id):
     ])
 
 
-@app.route('/list/<list_id>', methods=['GET', 'POST'])
+@blueprint.route('/list/<list_id>', methods=['GET', 'POST'])
 def cards(list_id):
     if request.method == 'POST':
         # 새로운 카드를 만듭니다.

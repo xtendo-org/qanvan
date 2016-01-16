@@ -1,6 +1,4 @@
-from flask.ext.sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from qanvan.base import db
 
 
 class Board(db.Model):
