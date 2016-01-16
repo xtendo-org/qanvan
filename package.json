@@ -4,8 +4,7 @@
   "description": "qanvan",
   "main": "build/main.js",
   "scripts": {
-    "test": "flow",
-    "build": "flow && babel src --out-dir build && WEBPACK=release webpack",
+    "build": "babel src --out-dir build && WEBPACK=release webpack",
     "start": "babel src --out-dir build --watch & webpack --watch"
   },
   "repository": {
@@ -24,7 +23,6 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-3": "^6.3.13",
-    "flow-bin": "^0.20.1",
     "webpack": "^1.12.10",
     "webpack-dev-server": "^1.14.0"
   },

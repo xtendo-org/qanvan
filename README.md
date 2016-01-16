@@ -16,9 +16,8 @@ cd qanvan
 
 TODO
 
-[Flow], [Babel], [React], [Webpack]을 씁니다.
+[Babel], [React], [Webpack]을 씁니다.
 
-[Flow]: http://flowtype.org/
 [Babel]: https://babeljs.io/
 [React]: https://facebook.github.io/react/
 [Webpack]: https://webpack.github.io/
