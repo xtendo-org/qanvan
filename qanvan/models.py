@@ -34,16 +34,16 @@ class CardList(db.Model):
 class Card(db.Model):
     __tablename__ = 'card'
     id = db.Column(db.Integer, primary_key=True)
-    priority = db.Column(db.Integer, index=True)
+    priority = db.Column(db.Integer, index=True, nullable=True)
     title = db.Column(db.String(80))
     content = db.Column(db.Text)
 
     card_list_id = db.Column(db.Integer, db.ForeignKey('card_list.id'))
 
-    def __init__(self, title):
+    def __init__(self, card_list_id, title, content=''):
+        self.card_list_id = card_list_id
         self.title = title
-        self.priority = self.id
-        self.content = ''
+        self.content = content
 
     def __repr__(self):
         return "<Card #%d: '%s'>" % (self.id, self.title)

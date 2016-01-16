@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify, abort
-from qanvan.models import db, Board, CardList
+from flask import Flask, request, jsonify
+from werkzeug.exceptions import BadRequest
+from qanvan.models import db, Board, CardList, Card
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -12,13 +13,10 @@ def hello():
 
 
 @app.route('/board', methods=['GET', 'POST'])
-def board_index():
+def boards():
     if request.method == 'POST':
         # 새로운 보드를 만듭니다.
-        name = request.get_json()['name']
-        # 'name'은 필수 필드
-        if 'name' is None:
-            abort(400)
+        name = required_field(request.get_json(), 'name')
         b = Board(name)
         db.session.add(b)
         db.session.commit()
@@ -29,13 +27,10 @@ def board_index():
 
 
 @app.route('/board/<board_id>', methods=['GET', 'POST'])
-def board_item(board_id):
+def card_lists(board_id):
     if request.method == 'POST':
         # 새로운 카드리스트를 만듭니다.
-        name = request.get_json()['name']
-        # 'name'은 필수 필드
-        if 'name' is None:
-            abort(400)
+        name = required_field(request.get_json(), 'name')
         l = CardList(board_id, name)
         db.session.add(l)
         db.session.commit()
@@ -49,3 +44,37 @@ def board_item(board_id):
         # 정렬 순서는 priority 값이 있으면 그것을 우선으로,
         # 없으면 primary key를 씁니다.
         .order_by(db.func.coalesce(CardList.priority, CardList.id))])
+
+
+@app.route('/list/<list_id>', methods=['GET', 'POST'])
+def cards(list_id):
+    if request.method == 'POST':
+        # 새로운 카드를 만듭니다.
+        data = request.get_json()
+        title = required_field(data, 'title')
+        content = required_field(data, 'content')
+        c = Card(list_id, title, content)
+        db.session.add(c)
+        db.session.commit()
+        return jsonify(result='ok')
+    # request.method == 'GET'
+    return jsonify(result=[
+        dict(zip(row.keys(), row)) for row in
+        db.session.query(
+            Card.id,
+            db.func.coalesce(Card.priority, Card.id).label('priority'),
+            Card.title,
+            Card.content
+        )
+        .filter_by(card_list_id=list_id)
+        # 정렬 순서는 priority 값이 있으면 그것을 우선으로,
+        # 없으면 primary key를 씁니다.
+        .order_by(db.func.coalesce(Card.priority, Card.id))
+    ])
+
+
+def required_field(d, key):
+    r = d.get(key)
+    if r is None:
+        raise BadRequest('key "%s" is required' % key)
+    return r
