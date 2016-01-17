@@ -21,48 +21,67 @@ positive-button()
         background-image none
         border-color #418737
 
+[draggable=true]
+    cursor move
+
 html
 body
     margin 0
     padding 0
     font 16px/2 sans-serif
+    height 100%
+
+body
+    background #455164
 
 h1,h2,h3,h4,h5,h6
+    font-size 16px
     line-height 1
+
+#content
+    height 100%
+
+#Qanvan
+    min-height 100%
+    margin 0 auto
+    display flex
 
 #BoardList
     list-style none
 
+    flex-shrink 0
     margin 0
     padding 0 20px
-    position fixed
-    top 0
-    left 0
+    min-height 100%
     width 160px
-    height 100%
 
-    background #369
+    background #455164
     color #CCC
 
     ul
         list-style none
-        margin 10px 0
+        margin-top 16px
         padding 0
 
     li
+        font-size 14px
+        padding 6px
         cursor pointer
         &:hover
             color #FFF
 
 .AddBoard
     positive-button()
+    margin-bottom 16px
 
 #MainArea
-    margin-left 200px
-
+    flex-grow 1
+    background #FFF
+    margin 6px
+    border-top 6px solid #ddd
+    border-radius 2px
     h1
-        margin 0
-        font-size 16px
+        margin 0 0 12px 0
         font-weight normal
         padding 16px
         border-bottom 1px solid #CCC
@@ -76,7 +95,7 @@ h1,h2,h3,h4,h5,h6
     border 1px solid #CCC
     border-radius 3px
     padding 12px 12px 1px 12px
-    margin 12px 0 0 12px
+    margin 0 0 12px 12px
     width 300px
     h2
         margin 0 0 12px 0
@@ -91,19 +110,22 @@ h1,h2,h3,h4,h5,h6
     background #FBF6DD
     border 1px solid #A98
     border-radius 3px
-    padding 0 12px
+    padding 0 12px 0 12px
     margin 0 0 12px 0
     box-shadow 0 5px 10px rgba(0xff,0xff,0xff,0.5)
 
-    line-height 1.5
+    line-height 2
 
     h3
         color #765
+        margin 6px 0
+        line-height 2
+    p
+        margin 6px 0
 
 .AddCard
     padding 6px
-    margin-left 150px
-    margin-bottom 11px
+    margin 18px 0 11px 150px
     border 1px solid #765
     border-radius 3px
     background #a98
