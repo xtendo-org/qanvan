@@ -17,7 +17,7 @@ class CardList(db.Model):
     __tablename__ = 'card_list'
     id = db.Column(db.Integer, primary_key=True)
     priority = db.Column(db.Integer, index=True, nullable=True)
-    name = db.Column(db.String(80), unique=True, index=True)
+    name = db.Column(db.String(80), index=True)
     is_deleted = db.Column(db.Boolean, default=False)
     is_archived = db.Column(db.Boolean, default=False)
 
