@@ -4,10 +4,40 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import $ from 'jquery'
 
-var CardLists = React.createClass({
+var CardList = React.createClass({
   render: function() {
     return (
-      <div>{this.props.chosen_board}</div>
+      <div key='{this.props.key}'>{this.props.name}</div>
+    );
+  }
+});
+
+var CardLists = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.componentWillReceiveProps(this.props);
+  },
+  componentWillReceiveProps: function(nextProps) {
+    $.ajax({
+      url: '/board/' + nextProps.chosen_board,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data['result']});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error('/board/' + nextProps.chosen_board, status, err.toString());
+      }.bind(this)
+    });
+  },
+  render: function() {
+    var card_lists = this.state.data.map(function(card_list) {
+      return <CardList key={card_list.id} name={card_list.name} />
+    });
+    return (
+      <div key={this.props.chosen_board}><p>{this.props.chosen_board}</p>{card_lists}</div>
     );
   }
 });
