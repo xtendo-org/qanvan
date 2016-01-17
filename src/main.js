@@ -70,7 +70,7 @@ var CardLists: React = React.createClass({
       <div id='CardListArea' key={this.props.chosen_board}>
         <p>{this.props.chosen_board}</p>
         {card_lists}
-        <div onClick={addCardList}>리스트 추가</div>
+        <div className='CardList' onClick={addCardList}>리스트 추가</div>
       </div>
     );
   }
@@ -90,7 +90,7 @@ var BoardList: React = React.createClass({
         handleBoardClick(board.id);
       };
       return (
-        <li className='boardName' onClick={boardOnClick} key={board.id}>
+        <li onClick={boardOnClick} key={board.id}>
           {board.name}
         </li>
       );
@@ -105,7 +105,7 @@ var BoardList: React = React.createClass({
     return (
       <ul id='BoardList'>
         {boardNodes}
-        <li className='boardName' onClick={addBoard}>보드 추가</li>
+        <li onClick={addBoard}>보드 추가</li>
       </ul>
     );
   }

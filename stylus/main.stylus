@@ -1,21 +1,33 @@
 html
 body
-    margin none
-    padding none
+    margin 0
+    padding 0
+    font 16px/2 sans-serif
 
 #BoardList
+    list-style none
+
+    margin 0
+    padding 0 20px
+    position absolute
+    top 0
+    left 0
     width 160px
-    margin none
-    padding 20px
-    float left
+    height 100%
+
     background #369
-    color #FFF
+    color #CCC
+
+    li
+        cursor pointer
+        &:hover
+            color #FFF
 
 #CardListArea
     margin-left 200px
 
 .CardList
-    border 1px solid #000
-
-.boardName
-    cursor pointer
+    border 1px solid #CCC
+    border-radius 3px
+    padding 0 16px
+    margin 12px
