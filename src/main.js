@@ -36,17 +36,8 @@ function commonPost(given: React, url: string, data: string) {
 }
 
 var Cards: React = React.createClass({
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    commonGet(this, '/list/' + this.props.list_id);
-  },
-  componentWillReceiveProps: function(nextProps) {
-    commonGet(this, '/list/' + nextProps.list_id);
-  },
   render: function() {
-    if (this.state.data.length === 0) {
+    if (this.props.data.length === 0) {
       return <div />;
     }
     var handleDragStart = function(e) {
@@ -59,7 +50,7 @@ var Cards: React = React.createClass({
       e.dataTransfer.setData('offset',
         e.clientX - (e.target.clientWidth / 2 + offsetLeft));
     };
-    var cards = this.state.data.map(function(card) {
+    var cards = this.props.data.map(function(card) {
       return (
         <div
           onDragStart={handleDragStart}
@@ -79,6 +70,12 @@ var Cards: React = React.createClass({
 });
 
 var CardList: React = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    commonGet(this, '/list/' + this.props.id);
+  },
   render: function() {
     var given = this;
     var addCard = function(e) {
@@ -152,7 +149,7 @@ var CardList: React = React.createClass({
           <h2>
             {this.props.name}
           </h2>
-          <Cards list_id={this.props.id} />
+          <Cards data={this.state.data} />
           <div className='AddCard' onClick={addCard}>카드 추가</div>
         </div>
       </div>
