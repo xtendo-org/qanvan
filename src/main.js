@@ -47,7 +47,14 @@ var Cards: React = React.createClass({
       return <div />;
     }
     var cards = this.state.data.map(function(card) {
-      return <div key={card.id}>{card.title}</div>
+      return (
+        <div className='Card' key={card.id}>
+          <h3>{card.title}</h3>
+          <p className={card.content ? 'CardContent' : 'EmptyCardContent'}>
+            {card.content ? card.content : '(내용 없음)'}
+          </p>
+        </div>
+      );
     });
     return <div>{cards}</div>;
   }
@@ -57,7 +64,7 @@ var CardList: React = React.createClass({
   render: function() {
     return (
       <div className='CardList' key='{this.props.id}'>
-        <h3>{this.props.name}</h3>
+        <h2>{this.props.name}</h2>
         <Cards list_id={this.props.id} />
       </div>
     );
@@ -76,7 +83,9 @@ var CardLists: React = React.createClass({
   },
   render: function() {
     if (this.props.chosen_board === 0) {
-      return <div id='CardListArea'>보드를 선택해 주세요.</div>
+      return <div id='MainArea'>
+        <h1>보드를 선택해 주세요.</h1>
+      </div>
     }
     var card_lists = this.state.data.map(function(card_list) {
       return <CardList
@@ -94,10 +103,12 @@ var CardLists: React = React.createClass({
       }
     };
     return (
-      <div id='CardListArea' key={this.props.chosen_board}>
-        <h2>{this.props.chosen_board_name}</h2>
-        {card_lists}
-        <div className='CardList' onClick={addCardList}>리스트 추가</div>
+      <div id='MainArea'>
+        <h1>{this.props.chosen_board_name}</h1>
+        <div id='CardListArea' key={this.props.chosen_board}>
+          {card_lists}
+          <div className='CardList AddList' onClick={addCardList}>리스트 추가</div>
+        </div>
       </div>
     );
   }
@@ -124,16 +135,18 @@ var BoardList: React = React.createClass({
     });
     var given = this;
     var addBoard = function(e) {
-      var boardName = prompt("새 보드의 이름");
+      var boardName = prompt("새 보드 이름");
       if (boardName !== null) {
         commonPost(given, given.props.url, `{"name": "${boardName}"}`);
       }
     }
     return (
-      <ul id='BoardList'>
-        {boardNodes}
-        <li onClick={addBoard}>보드 추가</li>
-      </ul>
+      <div id='BoardList'>
+        <ul>
+          {boardNodes}
+        </ul>
+        <div className='AddBoard' onClick={addBoard}>보드 추가</div>
+      </div>
     );
   }
 });
