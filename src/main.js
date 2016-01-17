@@ -2,7 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import $ from 'jquery'
 
-var Boards = React.createClass({
+var CardLists = React.createClass({
+  render: function() {
+    return (
+      <div>{this.props.chosen_board}</div>
+    );
+  }
+});
+
+var BoardList = React.createClass({
   getInitialState: function() {
     return {data: []};
   },
@@ -20,20 +28,39 @@ var Boards = React.createClass({
     });
   },
   render: function() {
-    var boardList = this.state.data.map(function(board) {
+    var handleBoardClick = this.props.handleBoardClick;
+    var boardNodes = this.state.data.map(function(board) {
+      var boardOnClick = function(e) {
+        handleBoardClick(board.id);
+      };
       return (
-        <li key={board.id}>{board.id}: {board.name}</li>
+        <li onClick={boardOnClick} key={board.id}>{board.name}</li>
       );
     });
     return (
-      <ul className="Boards">
-        {boardList}
+      <ul id='BoardList'>
+        {boardNodes}
       </ul>
     );
   }
-})
+});
+
+var Qanvan = React.createClass({
+  getInitialState: function() { return {chosen_board: 1}; },
+  handleBoardClick: function(board_id) {
+    this.setState({chosen_board: board_id});
+  },
+  render: function() {
+    return (
+      <div className="Qanvan">
+        <BoardList url='/board' handleBoardClick={this.handleBoardClick} />
+        <CardLists chosen_board={this.state.chosen_board} />
+      </div>
+    );
+  }
+});
 
 ReactDOM.render(
-  <Boards url='/board' />,
+  <Qanvan />,
   document.getElementById('content')
 );
