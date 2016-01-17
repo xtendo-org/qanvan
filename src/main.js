@@ -63,9 +63,27 @@ var BoardList: React = React.createClass({
         <li onClick={boardOnClick} key={board.id}>{board.name}</li>
       );
     });
+    var given = this;
+    var addBoard = function(e) {
+      var boardName = prompt("새 보드의 이름");
+      $.ajax({
+        url: given.props.url,
+        dataType: 'json',
+        contentType: 'application/json',
+        type: 'POST',
+        data: JSON.stringify({name: boardName}),
+        success: function(data) {
+          given.setState({data: data['result']});
+        }.bind(given),
+        error: function(xhr, status, err) {
+          console.error(given.props.url, status, err.toString());
+        }.bind(given)
+      });
+    }
     return (
       <ul id='BoardList'>
         {boardNodes}
+        <li onClick={addBoard}>보드 추가</li>
       </ul>
     );
   }
