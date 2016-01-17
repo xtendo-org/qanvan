@@ -80,22 +80,31 @@ h1,h2,h3,h4,h5,h6
     margin 6px
     border-top 6px solid #ddd
     border-radius 2px
+
     h1
         margin 0 0 12px 0
         font-weight normal
         padding 16px
         border-bottom 1px solid #CCC
 
+#MainArea.welcome
+    background #FFF url('/static/img/welcome.svg') center center no-repeat
+
 #CardListArea
     display flex
     flex-direction row
     flex-wrap wrap
+    align-items stretch
     padding 0 6px
 
 .CardListDropZone
+    display flex
+    align-items stretch
     width 300px
 
 .CardListReal
+    flex-grow 1
+    background #FFF
     border 1px solid #CCC
     border-radius 3px
     padding 12px 12px 1px 12px
@@ -106,6 +115,7 @@ h1,h2,h3,h4,h5,h6
 .AddList
     height 32px
     padding 6px 12px
+    margin-bottom 11px
 
     positive-button()
 

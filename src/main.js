@@ -50,7 +50,7 @@ var Cards: React = React.createClass({
       return <div />;
     }
     var handleDragStart = function(e) {
-      e.dataTransfer.setData('type', 'Card');
+      e.dataTransfer.setData('card', true);
       // e.dataTransfer.setData('key', given.props.id);
       e.target.style.opacity = .5;
       var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
@@ -89,6 +89,7 @@ var CardList: React = React.createClass({
       }
     };
     var handleDragStart = function(e) {
+      e.dataTransfer.setData('card_list', true);
       e.dataTransfer.setData('key', given.props.id);
       e.target.style.opacity = .5;
       var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
@@ -102,7 +103,12 @@ var CardList: React = React.createClass({
     };
     var handleDrop = function(e) {
       var key = e.dataTransfer.getData('key');
-      if (e.dataTransfer.getData('type') === 'Card') {
+      if (e.dataTransfer.getData('card')) {
+        console.log('rejecting card');
+        return;
+      }
+      if (!e.dataTransfer.getData('card_list')) {
+        console.log('rejecting non card_list');
         return;
       }
       if (key == given.props.id) {
@@ -166,9 +172,7 @@ var CardLists: React = React.createClass({
   },
   render: function() {
     if (this.props.chosen_board === 0) {
-      return <div id='MainArea'>
-        <h1>보드를 선택해 주세요.</h1>
-      </div>
+      return <div id='MainArea' className='welcome' />
     }
     var given = this;
     var handleListSwap = function(card_lists) {
@@ -221,8 +225,8 @@ var CardLists: React = React.createClass({
             onDragOver={e => e.preventDefault()}
             onDragEnter={e => e.preventDefault()}
           >
-            <div className='CardListReal AddList' onClick={addCardList}>
-              리스트 추가
+            <div className='CardListReal'>
+              <div className='AddList' onClick={addCardList}>리스트 추가</div>
             </div>
           </div>
         </div>
