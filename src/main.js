@@ -4,7 +4,21 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import $ from 'jquery'
 
-var CardList = React.createClass({
+function commonGet(given: React, url: string) {
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    cache: false,
+    success: function(data) {
+      given.setState({data: data['result']});
+    }.bind(given),
+    error: function(xhr, status, err) {
+      console.error(url, status, err.toString());
+    }.bind(given)
+  });
+}
+
+var CardList: React = React.createClass({
   render: function() {
     return (
       <div key='{this.props.key}'>{this.props.name}</div>
@@ -12,25 +26,15 @@ var CardList = React.createClass({
   }
 });
 
-var CardLists = React.createClass({
+var CardLists: React = React.createClass({
   getInitialState: function() {
     return {data: []};
   },
   componentDidMount: function() {
-    this.componentWillReceiveProps(this.props);
+    commonGet(this, '/board/' + this.props.chosen_board);
   },
   componentWillReceiveProps: function(nextProps) {
-    $.ajax({
-      url: '/board/' + nextProps.chosen_board,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data['result']});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error('/board/' + nextProps.chosen_board, status, err.toString());
-      }.bind(this)
-    });
+    commonGet(this, '/board/' + nextProps.chosen_board);
   },
   render: function() {
     var card_lists = this.state.data.map(function(card_list) {
@@ -42,22 +46,12 @@ var CardLists = React.createClass({
   }
 });
 
-var BoardList = React.createClass({
+var BoardList: React = React.createClass({
   getInitialState: function() {
     return {data: []};
   },
   componentDidMount: function() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data['result']});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
+    commonGet(this, this.props.url);
   },
   render: function() {
     var handleBoardClick = this.props.handleBoardClick;
@@ -77,7 +71,7 @@ var BoardList = React.createClass({
   }
 });
 
-var Qanvan = React.createClass({
+var Qanvan: React = React.createClass({
   getInitialState: function() { return {chosen_board: 1}; },
   handleBoardClick: function(board_id) {
     this.setState({chosen_board: board_id});
