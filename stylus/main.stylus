@@ -12,7 +12,6 @@ positive-button()
     &:hover
         color #fff
         background-color #569e3d
-        background-image -webkit-linear-gradient(#79d858, #569e3d)
         background-image linear-gradient(#79d858, #569e3d)
         border-color #4a993e
 
@@ -100,6 +99,23 @@ h1,h2,h3,h4,h5,h6
 
     h3
         color #765
+
+.AddCard
+    padding 6px
+    margin-left 150px
+    margin-bottom 11px
+    border 1px solid #765
+    border-radius 3px
+    background #a98
+    color #FFF
+    text-align center
+    font-weight bold
+    cursor pointer
+
+    &:hover
+        background #765
+    &:active
+        background #432
 
 .EmptyCardContent
     color #999

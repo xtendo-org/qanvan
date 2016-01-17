@@ -60,12 +60,10 @@ def cards(list_id):
         # 새로운 카드를 만듭니다.
         data = request.get_json()
         title = required_field(data, 'title')
-        content = required_field(data, 'content')
+        content = data.get('content', '')
         c = Card(list_id, title, content)
         db.session.add(c)
         db.session.commit()
-        return jsonify(result='ok')
-    # request.method == 'GET'
     return jsonify(result=[
         dict(zip(row.keys(), row)) for row in
         db.session.query(

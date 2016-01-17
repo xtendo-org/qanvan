@@ -42,6 +42,9 @@ var Cards: React = React.createClass({
   componentDidMount: function() {
     commonGet(this, '/list/' + this.props.list_id);
   },
+  componentWillReceiveProps: function(nextProps) {
+    commonGet(this, '/list/' + nextProps.list_id);
+  },
   render: function() {
     if (this.state.data.length === 0) {
       return <div />;
@@ -62,10 +65,19 @@ var Cards: React = React.createClass({
 
 var CardList: React = React.createClass({
   render: function() {
+    var given = this;
+    var addCard = function(e) {
+      var newTitle = prompt('새 카드 제목');
+      if (newTitle !== null) {
+        commonPost(given, '/list/' + given.props.id,
+          `{"title": "${newTitle}"}`);
+      }
+    };
     return (
       <div className='CardList' key='{this.props.id}'>
         <h2>{this.props.name}</h2>
         <Cards list_id={this.props.id} />
+        <div className='AddCard' onClick={addCard}>카드 추가</div>
       </div>
     );
   }
@@ -99,7 +111,7 @@ var CardLists: React = React.createClass({
       var newName = prompt('새 리스트 이름');
       if (newName !== null) {
         commonPost(given, '/board/' + given.props.chosen_board,
-            `{"name": "${newName}"}`);
+          `{"name": "${newName}"}`);
       }
     };
     return (
