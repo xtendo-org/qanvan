@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 import $ from 'jquery'
 
 function commonGet(given: React, url: string) {
+  given.setState({data: []});
   $.ajax({
     url: url,
     dataType: 'json',
@@ -34,11 +35,30 @@ function commonPost(given: React, url: string, data: string) {
   });
 }
 
+var Cards: React = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    commonGet(this, '/list/' + this.props.list_id);
+  },
+  render: function() {
+    if (this.state.data.length === 0) {
+      return <div />;
+    }
+    var cards = this.state.data.map(function(card) {
+      return <div key={card.id}>{card.title}</div>
+    });
+    return <div>{cards}</div>;
+  }
+});
+
 var CardList: React = React.createClass({
   render: function() {
     return (
-      <div className='CardList' key='{this.props.key}'>
+      <div className='CardList' key='{this.props.id}'>
         <h3>{this.props.name}</h3>
+        <Cards list_id={this.props.id} />
       </div>
     );
   }
@@ -59,7 +79,11 @@ var CardLists: React = React.createClass({
       return <div id='CardListArea'>보드를 선택해 주세요.</div>
     }
     var card_lists = this.state.data.map(function(card_list) {
-      return <CardList key={card_list.id} name={card_list.name} />
+      return <CardList
+        id={card_list.id}
+        key={card_list.id}
+        name={card_list.name}
+      />
     });
     var given = this;
     var addCardList = function(e) {
