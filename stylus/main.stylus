@@ -90,13 +90,16 @@ h1,h2,h3,h4,h5,h6
     display flex
     flex-direction row
     flex-wrap wrap
+    padding 0 6px
 
-.CardList
+.CardListDropZone
+    width 300px
+
+.CardListReal
     border 1px solid #CCC
     border-radius 3px
     padding 12px 12px 1px 12px
-    margin 0 0 12px 12px
-    width 300px
+    margin 0 6px 12px 6px
     h2
         margin 0 0 12px 0
 
@@ -129,6 +132,8 @@ h1,h2,h3,h4,h5,h6
     border 1px solid #765
     border-radius 3px
     background #a98
+    background-image linear-gradient(#a98, #765)
+    text-shadow 0px -1px 0px rgba(0, 0, 0, 0.15)
     color #FFF
     text-align center
     font-weight bold

@@ -74,33 +74,67 @@ var CardList: React = React.createClass({
       }
     };
     var handleDragStart = function(e) {
-      // e.preventDefault();
-      console.log('drag begins');
       e.dataTransfer.setData('type', 'CardList');
       e.dataTransfer.setData('key', given.props.id);
       e.target.style.opacity = .5;
+      var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
+      // 드래그 시작할 때 마우스 포인터의 위치가 카드리스트의 중심으로부터
+      // 얼마나 이탈했는지를 저장
+      e.dataTransfer.setData('offset',
+        e.clientX - (e.target.clientWidth / 2 + offsetLeft));
     };
     var handleDragEnd = function(e) {
-      // e.preventDefault();
-      console.log('drag ends');
       e.target.style.opacity = 1;
+    };
+    var handleDrop = function(e) {
+      var key = e.dataTransfer.getData('key');
+      if (e.dataTransfer.getData('type') !== 'CardList') {
+        return;
+      }
+      if (key == given.props.id) {
+        return;
+      }
+      var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
+      // 카드리스트 드랍 존의 왼쪽 절반에 떨어지면 앞에 넣기,
+      // 오른쪽 절반에 떨어지면 뒤에 넣기
+      var priority =
+        (e.target.clientWidth / 2 + offsetLeft < e.clientX -
+          e.dataTransfer.getData('offset')) ?
+        given.props.priority + 1 : given.props.priority;
+      var url = `/board/${given.props.board}/swap/${key}/${priority}`;
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        contentType: 'application/json',
+        type: 'POST',
+        success: function(data) {
+          given.props.list_swap(data['result']);
+        }.bind(given),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+        }.bind(given)
+      });
     };
     return (
       <div
-        draggable='true'
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
+        className='CardListDropZone'
         onDragOver={e => e.preventDefault()}
         onDragEnter={e => e.preventDefault()}
-        onDrop={e => e.preventDefault()}
-        className='CardList'
+        onDrop={handleDrop}
         key='{this.props.id}'
       >
-        <h2>
-          {this.props.name}
-        </h2>
-        <Cards list_id={this.props.id} />
-        <div className='AddCard' onClick={addCard}>카드 추가</div>
+        <div
+          className='CardListReal'
+          draggable='true'
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <h2>
+            {this.props.name}
+          </h2>
+          <Cards list_id={this.props.id} />
+          <div className='AddCard' onClick={addCard}>카드 추가</div>
+        </div>
       </div>
     );
   }
@@ -122,14 +156,20 @@ var CardLists: React = React.createClass({
         <h1>보드를 선택해 주세요.</h1>
       </div>
     }
+    var given = this;
+    var handleListSwap = function(card_lists) {
+      given.setState({data: card_lists});
+    }
     var card_lists = this.state.data.map(function(card_list) {
       return <CardList
         id={card_list.id}
         key={card_list.id}
+        priority={card_list.priority}
         name={card_list.name}
+        board={given.props.chosen_board}
+        list_swap={handleListSwap}
       />
     });
-    var given = this;
     var addCardList = function(e) {
       var newName = prompt('새 리스트 이름');
       if (newName !== null) {
@@ -142,7 +182,11 @@ var CardLists: React = React.createClass({
         <h1>{this.props.chosen_board_name}</h1>
         <div id='CardListArea' key={this.props.chosen_board}>
           {card_lists}
-          <div className='CardList AddList' onClick={addCardList}>리스트 추가</div>
+          <div className='CardListDropZone'>
+            <div className='CardListReal AddList' onClick={addCardList}>
+              리스트 추가
+            </div>
+          </div>
         </div>
       </div>
     );

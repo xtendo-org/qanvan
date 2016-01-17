@@ -38,6 +38,10 @@ def card_lists(board_id):
         db.session.add(l)
         db.session.commit()
         # TODO: 없는 board_id에 대한 요청일 경우 적절한 안내가 필요할까?
+    return list_of_cardlists(board_id)
+
+
+def list_of_cardlists(board_id):
     # 이 보드에 있는 모든 카드리스트의 목록을 반환합니다.
     return jsonify(result=[
         dict(zip(row.keys(), row)) for row in
@@ -52,6 +56,26 @@ def card_lists(board_id):
         # 없으면 primary key를 씁니다.
         .order_by(db.func.coalesce(CardList.priority, CardList.id))
     ])
+
+
+@blueprint.route('/board/<board_id>/swap/<source>/<target>', methods=['POST'])
+def swap_list(board_id, source, target):
+    db.session.execute(
+        CardList.__table__.update(
+        ).where(
+            db.func.coalesce(CardList.priority, CardList.id) >= target
+        ).values(
+            priority=db.func.coalesce(CardList.priority, CardList.id) + 1
+        )
+    )
+    db.session.execute(
+        CardList.__table__.update(
+        ).where(
+            CardList.__table__.c.id == source
+        ).values(priority=target)
+    )
+    db.session.commit()
+    return list_of_cardlists(board_id)
 
 
 @blueprint.route('/list/<list_id>', methods=['GET', 'POST'])
