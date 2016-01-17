@@ -55,6 +55,9 @@ var CardLists: React = React.createClass({
     commonGet(this, '/board/' + nextProps.chosen_board);
   },
   render: function() {
+    if (this.props.chosen_board === 0) {
+      return <div id='CardListArea'>보드를 선택해 주세요.</div>
+    }
     var card_lists = this.state.data.map(function(card_list) {
       return <CardList key={card_list.id} name={card_list.name} />
     });
@@ -68,7 +71,7 @@ var CardLists: React = React.createClass({
     };
     return (
       <div id='CardListArea' key={this.props.chosen_board}>
-        <p>{this.props.chosen_board}</p>
+        <h2>{this.props.chosen_board_name}</h2>
         {card_lists}
         <div className='CardList' onClick={addCardList}>리스트 추가</div>
       </div>
@@ -87,7 +90,7 @@ var BoardList: React = React.createClass({
     var handleBoardClick = this.props.handleBoardClick;
     var boardNodes = this.state.data.map(function(board) {
       var boardOnClick = function(e) {
-        handleBoardClick(board.id);
+        handleBoardClick(board.id, board.name);
       };
       return (
         <li onClick={boardOnClick} key={board.id}>
@@ -112,15 +115,24 @@ var BoardList: React = React.createClass({
 });
 
 var Qanvan: React = React.createClass({
-  getInitialState: function() { return {chosen_board: 1}; },
-  handleBoardClick: function(board_id) {
-    this.setState({chosen_board: board_id});
+  getInitialState: function() { return {
+    chosen_board: 0,
+    chosen_board_name: 'no board chosen'
+  };},
+  handleBoardClick: function(board_id, board_name) {
+    this.setState({
+      chosen_board: board_id,
+      chosen_board_name: board_name
+    });
   },
   render: function() {
     return (
       <div className="Qanvan">
         <BoardList url='/board' handleBoardClick={this.handleBoardClick} />
-        <CardLists chosen_board={this.state.chosen_board} />
+        <CardLists
+          chosen_board={this.state.chosen_board}
+          chosen_board_name={this.state.chosen_board_name}
+        />
       </div>
     );
   }
