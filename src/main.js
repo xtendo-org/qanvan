@@ -51,7 +51,7 @@ var Cards: React = React.createClass({
     }
     var cards = this.state.data.map(function(card) {
       return (
-        <div className='Card' key={card.id}>
+        <div draggable='true' className='Card' key={card.id}>
           <h3>{card.title}</h3>
           <p className={card.content ? 'CardContent' : 'EmptyCardContent'}>
             {card.content ? card.content : '(내용 없음)'}
@@ -73,9 +73,32 @@ var CardList: React = React.createClass({
           `{"title": "${newTitle}"}`);
       }
     };
+    var handleDragStart = function(e) {
+      // e.preventDefault();
+      console.log('drag begins');
+      e.dataTransfer.setData('type', 'CardList');
+      e.dataTransfer.setData('key', given.props.id);
+      e.target.style.opacity = .5;
+    };
+    var handleDragEnd = function(e) {
+      // e.preventDefault();
+      console.log('drag ends');
+      e.target.style.opacity = 1;
+    };
     return (
-      <div className='CardList' key='{this.props.id}'>
-        <h2>{this.props.name}</h2>
+      <div
+        draggable='true'
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragOver={e => e.preventDefault()}
+        onDragEnter={e => e.preventDefault()}
+        onDrop={e => e.preventDefault()}
+        className='CardList'
+        key='{this.props.id}'
+      >
+        <h2>
+          {this.props.name}
+        </h2>
         <Cards list_id={this.props.id} />
         <div className='AddCard' onClick={addCard}>카드 추가</div>
       </div>
@@ -176,7 +199,7 @@ var Qanvan: React = React.createClass({
   },
   render: function() {
     return (
-      <div className="Qanvan">
+      <div id="Qanvan">
         <BoardList url='/board' handleBoardClick={this.handleBoardClick} />
         <CardLists
           chosen_board={this.state.chosen_board}
