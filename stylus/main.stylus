@@ -1,0 +1,21 @@
+html
+body
+    margin none
+    padding none
+
+#BoardList
+    width 160px
+    margin none
+    padding 20px
+    float left
+    background #369
+    color #FFF
+
+#CardListArea
+    margin-left 200px
+
+.CardList
+    border 1px solid #000
+
+.boardName
+    cursor pointer

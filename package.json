@@ -5,8 +5,8 @@
   "main": "build/main.js",
   "scripts": {
     "test": "flow",
-    "build": "flow && babel src --out-dir build && WEBPACK=release webpack",
-    "start": "babel src --out-dir build --watch & webpack --watch"
+    "build": "flow && stylus stylus/main.stylus -o static/build/main.css && babel src --out-dir build && WEBPACK=release webpack",
+    "start": "stylus -w stylus/main.stylus -o static/build/main.css & babel src --out-dir build --watch & webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-3": "^6.3.13",
     "flow-bin": "^0.20.1",
+    "stylus": "^0.53.0",
     "webpack": "^1.12.10",
     "webpack-dev-server": "^1.14.0"
   },

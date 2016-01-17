@@ -37,7 +37,7 @@ function commonPost(given: React, url: string, data: string) {
 var CardList: React = React.createClass({
   render: function() {
     return (
-      <div key='{this.props.key}'>
+      <div className='CardList' key='{this.props.key}'>
         <h3>{this.props.name}</h3>
       </div>
     );
@@ -67,7 +67,7 @@ var CardLists: React = React.createClass({
       }
     };
     return (
-      <div key={this.props.chosen_board}>
+      <div id='CardListArea' key={this.props.chosen_board}>
         <p>{this.props.chosen_board}</p>
         {card_lists}
         <div onClick={addCardList}>리스트 추가</div>
@@ -90,7 +90,9 @@ var BoardList: React = React.createClass({
         handleBoardClick(board.id);
       };
       return (
-        <li onClick={boardOnClick} key={board.id}>{board.name}</li>
+        <li className='boardName' onClick={boardOnClick} key={board.id}>
+          {board.name}
+        </li>
       );
     });
     var given = this;
@@ -103,7 +105,7 @@ var BoardList: React = React.createClass({
     return (
       <ul id='BoardList'>
         {boardNodes}
-        <li onClick={addBoard}>보드 추가</li>
+        <li className='boardName' onClick={addBoard}>보드 추가</li>
       </ul>
     );
   }
