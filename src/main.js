@@ -18,10 +18,28 @@ function commonGet(given: React, url: string) {
   });
 }
 
+function commonPost(given: React, url: string, data: string) {
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    contentType: 'application/json',
+    type: 'POST',
+    data: data,
+    success: function(data) {
+      given.setState({data: data['result']});
+    }.bind(given),
+    error: function(xhr, status, err) {
+      console.error(url, status, err.toString());
+    }.bind(given)
+  });
+}
+
 var CardList: React = React.createClass({
   render: function() {
     return (
-      <div key='{this.props.key}'>{this.props.name}</div>
+      <div key='{this.props.key}'>
+        <h3>{this.props.name}</h3>
+      </div>
     );
   }
 });
@@ -40,8 +58,20 @@ var CardLists: React = React.createClass({
     var card_lists = this.state.data.map(function(card_list) {
       return <CardList key={card_list.id} name={card_list.name} />
     });
+    var given = this;
+    var addCardList = function(e) {
+      var newName = prompt('새 리스트 이름');
+      if (newName !== null) {
+        commonPost(given, '/board/' + given.props.chosen_board,
+            `{"name": "${newName}"}`);
+      }
+    };
     return (
-      <div key={this.props.chosen_board}><p>{this.props.chosen_board}</p>{card_lists}</div>
+      <div key={this.props.chosen_board}>
+        <p>{this.props.chosen_board}</p>
+        {card_lists}
+        <div onClick={addCardList}>리스트 추가</div>
+      </div>
     );
   }
 });
@@ -66,19 +96,9 @@ var BoardList: React = React.createClass({
     var given = this;
     var addBoard = function(e) {
       var boardName = prompt("새 보드의 이름");
-      $.ajax({
-        url: given.props.url,
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'POST',
-        data: JSON.stringify({name: boardName}),
-        success: function(data) {
-          given.setState({data: data['result']});
-        }.bind(given),
-        error: function(xhr, status, err) {
-          console.error(given.props.url, status, err.toString());
-        }.bind(given)
-      });
+      if (boardName !== null) {
+        commonPost(given, given.props.url, `{"name": "${boardName}"}`);
+      }
     }
     return (
       <ul id='BoardList'>

@@ -38,9 +38,7 @@ def card_lists(board_id):
         db.session.add(l)
         db.session.commit()
         # TODO: 없는 board_id에 대한 요청일 경우 적절한 안내가 필요할까?
-        return jsonify(result='ok')
     # 이 보드에 있는 모든 카드리스트의 목록을 반환합니다.
-    # request.method == 'GET'
     return jsonify(result=[
         dict(zip(row.keys(), row)) for row in
         db.session.query(
