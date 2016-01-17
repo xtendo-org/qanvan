@@ -49,9 +49,24 @@ var Cards: React = React.createClass({
     if (this.state.data.length === 0) {
       return <div />;
     }
+    var handleDragStart = function(e) {
+      e.dataTransfer.setData('type', 'Card');
+      // e.dataTransfer.setData('key', given.props.id);
+      e.target.style.opacity = .5;
+      var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
+      // 드래그 시작할 때 마우스 포인터의 위치가 카드의 중심으로부터
+      // 얼마나 이탈했는지를 저장
+      e.dataTransfer.setData('offset',
+        e.clientX - (e.target.clientWidth / 2 + offsetLeft));
+    };
     var cards = this.state.data.map(function(card) {
       return (
-        <div draggable='true' className='Card' key={card.id}>
+        <div
+          onDragStart={handleDragStart}
+          draggable='true'
+          className='Card'
+          key={card.id}
+        >
           <h3>{card.title}</h3>
           <p className={card.content ? 'CardContent' : 'EmptyCardContent'}>
             {card.content ? card.content : '(내용 없음)'}
@@ -74,7 +89,6 @@ var CardList: React = React.createClass({
       }
     };
     var handleDragStart = function(e) {
-      e.dataTransfer.setData('type', 'CardList');
       e.dataTransfer.setData('key', given.props.id);
       e.target.style.opacity = .5;
       var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
@@ -88,7 +102,7 @@ var CardList: React = React.createClass({
     };
     var handleDrop = function(e) {
       var key = e.dataTransfer.getData('key');
-      if (e.dataTransfer.getData('type') !== 'CardList') {
+      if (e.dataTransfer.getData('type') === 'Card') {
         return;
       }
       if (key == given.props.id) {
@@ -177,12 +191,36 @@ var CardLists: React = React.createClass({
           `{"name": "${newName}"}`);
       }
     };
+    var handleDropOnAdd = function(e) {
+      var key = e.dataTransfer.getData('key');
+      if (e.dataTransfer.getData('type') === 'Card') {
+        return;
+      }
+      var url = `/board/${given.props.chosen_board}/swap/${key}/0`;
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        contentType: 'application/json',
+        type: 'POST',
+        success: function(data) {
+          handleListSwap(data['result']);
+        }.bind(given),
+        error: function(xhr, status, err) {
+          console.error(url, status, err.toString());
+        }.bind(given)
+      });
+    };
     return (
       <div id='MainArea'>
         <h1>{this.props.chosen_board_name}</h1>
         <div id='CardListArea' key={this.props.chosen_board}>
           {card_lists}
-          <div className='CardListDropZone'>
+          <div
+            className='CardListDropZone'
+            onDrop={handleDropOnAdd}
+            onDragOver={e => e.preventDefault()}
+            onDragEnter={e => e.preventDefault()}
+          >
             <div className='CardListReal AddList' onClick={addCardList}>
               리스트 추가
             </div>

@@ -60,14 +60,25 @@ def list_of_cardlists(board_id):
 
 @blueprint.route('/board/<board_id>/swap/<source>/<target>', methods=['POST'])
 def swap_list(board_id, source, target):
-    db.session.execute(
-        CardList.__table__.update(
-        ).where(
-            db.func.coalesce(CardList.priority, CardList.id) >= target
-        ).values(
-            priority=db.func.coalesce(CardList.priority, CardList.id) + 1
+    if target == '0':  # 0은 맨 뒤에다 끼워넣으려는 경우입니다.
+        target = db.session.query(
+            db.func.coalesce(CardList.priority, CardList.id) + 1
+        ).filter(
+            CardList.board_id == board_id
+        ).order_by(
+            -db.func.coalesce(CardList.priority, CardList.id)
+        ).limit(1).subquery().as_scalar()
+    else:
+        db.session.execute(
+            CardList.__table__.update(
+            ).where(
+                db.func.coalesce(CardList.priority, CardList.id) >= target
+            ).where(
+                CardList.board_id == board_id
+            ).values(
+                priority=db.func.coalesce(CardList.priority, CardList.id) + 1
+            )
         )
-    )
     db.session.execute(
         CardList.__table__.update(
         ).where(
