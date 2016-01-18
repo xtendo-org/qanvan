@@ -106,7 +106,14 @@ h1,h2,h3,h4,h5,h6
     padding 12px 12px 1px 12px
     margin 0 6px 12px 6px
     h2
-        margin 0 0 12px 0
+        margin 0 40px 12px 0
+
+    .CardListDelete
+        width 20px
+        float right
+        text-align center
+        line-height 1
+        cursor pointer
 
 .AddList
     height 32px

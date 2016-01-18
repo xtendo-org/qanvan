@@ -232,6 +232,21 @@ var CardList: React = React.createClass({
     });
   },
 
+  handleDelete: function() {
+    var url: string = '/list/' + this.props.id;
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function(data) {
+        this.props.board_update();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
+  },
+
   render: function() {
     var given = this;
     var addCard = function(e) {
@@ -268,6 +283,7 @@ var CardList: React = React.createClass({
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
+          <div onClick={this.handleDelete} className='CardListDelete'>✗</div>
           <h2
             onDragOver={e => e.preventDefault()}
             onDragEnter={e => e.preventDefault()}

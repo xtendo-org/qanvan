@@ -51,7 +51,7 @@ def list_of_cardlists(board_id):
             .label('priority'),
             CardList.name,
         )
-        .filter_by(board_id=board_id)
+        .filter_by(board_id=board_id, is_deleted=False)
         # 정렬 순서는 priority 값이 있으면 그것을 우선으로,
         # 없으면 primary key를 씁니다.
         .order_by(db.func.coalesce(CardList.priority, CardList.id))
@@ -89,8 +89,17 @@ def swap_list(board_id, source, target):
     return list_of_cardlists(board_id)
 
 
-@blueprint.route('/list/<list_id>', methods=['GET', 'POST'])
+@blueprint.route('/list/<list_id>', methods=['GET', 'POST', 'DELETE'])
 def cards(list_id):
+    if request.method == 'DELETE':
+        db.session.execute(
+            CardList.__table__.update(
+            ).where(
+                CardList.__table__.c.id == list_id
+            ).values(is_deleted=True)
+        )
+        db.session.commit()
+        return jsonify(result='ok')
     if request.method == 'POST':
         # 새로운 카드를 만듭니다.
         data = request.get_json()
