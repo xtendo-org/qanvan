@@ -173,6 +173,65 @@ var CardList: React = React.createClass({
   componentDidMount: function() {
     commonGet(this, '/list/' + this.props.id);
   },
+  handleDrop: function(e) {
+    var key = e.dataTransfer.getData('key');
+    if (e.dataTransfer.getData('card')) {
+      return;
+    }
+    if (!e.dataTransfer.getData('card_list')) {
+      return;
+    }
+    if (key == this.props.id) {
+      return;
+    }
+    var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
+    // 카드리스트 드랍 존의 왼쪽 절반에 떨어지면 앞에 넣기,
+    // 오른쪽 절반에 떨어지면 뒤에 넣기
+    var priority =
+      (e.target.clientWidth / 2 + offsetLeft < e.clientX -
+        e.dataTransfer.getData('offset')) ?
+      this.props.priority + 1 : this.props.priority;
+    var url = `/board/${this.props.board}/swap/${key}/${priority}`;
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      contentType: 'application/json',
+      type: 'POST',
+      success: function(data) {
+        this.props.list_swap(data['result']);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleCardDrop: function(e) {
+    if (!e.dataTransfer.getData('card')) {
+      return;
+    }
+    if (!e.dataTransfer.getData('card_key')) {
+      return;
+    }
+    var url: string = '/card/swap';
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      contentType: 'application/json',
+      type: 'POST',
+      data: JSON.stringify({
+        list_id: this.props.id,
+        source: e.dataTransfer.getData('card_key'),
+        target: 0
+      }),
+      success: function(data) {
+        this.props.board_update();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
+  },
+
   render: function() {
     var given = this;
     var addCard = function(e) {
@@ -196,44 +255,12 @@ var CardList: React = React.createClass({
     var handleDragEnd = function(e) {
       e.target.style.opacity = 1;
     };
-    var handleDrop = function(e) {
-      var key = e.dataTransfer.getData('key');
-      if (e.dataTransfer.getData('card')) {
-        return;
-      }
-      if (!e.dataTransfer.getData('card_list')) {
-        return;
-      }
-      if (key == given.props.id) {
-        return;
-      }
-      var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
-      // 카드리스트 드랍 존의 왼쪽 절반에 떨어지면 앞에 넣기,
-      // 오른쪽 절반에 떨어지면 뒤에 넣기
-      var priority =
-        (e.target.clientWidth / 2 + offsetLeft < e.clientX -
-          e.dataTransfer.getData('offset')) ?
-        given.props.priority + 1 : given.props.priority;
-      var url = `/board/${given.props.board}/swap/${key}/${priority}`;
-      $.ajax({
-        url: url,
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'POST',
-        success: function(data) {
-          given.props.list_swap(data['result']);
-        }.bind(given),
-        error: function(xhr, status, err) {
-          console.error(url, status, err.toString());
-        }.bind(given)
-      });
-    };
     return (
       <div
         className='CardListDropZone'
         onDragOver={e => e.preventDefault()}
         onDragEnter={e => e.preventDefault()}
-        onDrop={handleDrop}
+        onDrop={this.handleDrop}
       >
         <div
           className='CardListReal'
@@ -241,7 +268,11 @@ var CardList: React = React.createClass({
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <h2>
+          <h2
+            onDragOver={e => e.preventDefault()}
+            onDragEnter={e => e.preventDefault()}
+            onDrop={this.handleCardDrop}
+          >
             {this.props.name}
           </h2>
           <Cards
@@ -249,7 +280,13 @@ var CardList: React = React.createClass({
             board_update={this.props.board_update}
             data={this.state.data}
           />
-          <div className='AddCard' onClick={addCard}>카드 추가</div>
+          <div
+            className='AddCard'
+            onClick={addCard}
+            onDragOver={e => e.preventDefault()}
+            onDragEnter={e => e.preventDefault()}
+            onDrop={this.handleCardDrop}
+          >카드 추가</div>
         </div>
       </div>
     );

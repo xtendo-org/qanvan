@@ -94,16 +94,12 @@ h1,h2,h3,h4,h5,h6
     display flex
     flex-direction row
     flex-wrap wrap
-    align-items stretch
     padding 0 6px
 
 .CardListDropZone
-    display flex
-    align-items stretch
     width 300px
 
 .CardListReal
-    flex-grow 1
     background #FFF
     border 1px solid #CCC
     border-radius 3px
@@ -141,7 +137,7 @@ h1,h2,h3,h4,h5,h6
 
 .AddCard
     padding 6px
-    margin 18px 0 11px 150px
+    margin 18px 0 11px
     border 1px solid #765
     border-radius 3px
     background #a98
