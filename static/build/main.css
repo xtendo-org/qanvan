@@ -1,0 +1,187 @@
+[draggable=true] {
+  cursor: move;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font: 16px/2 sans-serif;
+  height: 100%;
+}
+body {
+  background: #455164;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 16px;
+  line-height: 1;
+}
+#content {
+  height: 100%;
+}
+#Qanvan {
+  min-height: 100%;
+  margin: 0 auto;
+  display: flex;
+}
+#BoardList {
+  list-style: none;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 20px;
+  min-height: 100%;
+  width: 160px;
+  background: #455164;
+  color: #ccc;
+}
+#BoardList ul {
+  list-style: none;
+  margin-top: 16px;
+  padding: 0;
+}
+#BoardList li {
+  font-size: 14px;
+  padding: 6px;
+  cursor: pointer;
+}
+#BoardList li:hover {
+  color: #fff;
+}
+.AddBoard {
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0px -1px 0px rgba(0,0,0,0.15);
+  background-color: #60b044;
+  background-image: linear-gradient(#8add6d, #60b044);
+  border: 1px solid #5ca941;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+.AddBoard:hover {
+  color: #fff;
+  background-color: #569e3d;
+  background-image: linear-gradient(#79d858, #569e3d);
+  border-color: #4a993e;
+}
+.AddBoard:active {
+  text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+  background-color: #569e3d;
+  background-image: none;
+  border-color: #418737;
+}
+#MainArea {
+  flex-grow: 1;
+  background: #fff;
+  margin: 6px;
+  border-top: 6px solid #ddd;
+  border-radius: 2px;
+}
+#MainArea h1 {
+  margin: 0 0 12px 0;
+  font-weight: normal;
+  padding: 16px;
+  border-bottom: 1px solid #ccc;
+}
+#MainArea.welcome {
+  background: #fff url("/static/img/welcome.svg") center center no-repeat;
+}
+#CardListArea {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0 6px;
+}
+.CardListDropZone {
+  width: 300px;
+}
+.CardListReal {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 12px 12px 1px 12px;
+  margin: 0 6px 12px 6px;
+}
+.CardListReal h2 {
+  margin: 0 40px 12px 0;
+}
+.CardListReal .CardListDelete {
+  width: 20px;
+  float: right;
+  text-align: center;
+  line-height: 1;
+  cursor: pointer;
+}
+.AddList {
+  height: 32px;
+  padding: 6px 12px;
+  margin-bottom: 11px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0px -1px 0px rgba(0,0,0,0.15);
+  background-color: #60b044;
+  background-image: linear-gradient(#8add6d, #60b044);
+  border: 1px solid #5ca941;
+  border-radius: 3px;
+}
+.AddList:hover {
+  color: #fff;
+  background-color: #569e3d;
+  background-image: linear-gradient(#79d858, #569e3d);
+  border-color: #4a993e;
+}
+.AddList:active {
+  text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+  background-color: #569e3d;
+  background-image: none;
+  border-color: #418737;
+}
+.CardDropZone {
+  padding: 1px 0;
+}
+.Card {
+  background: #fbf6dd;
+  border: 1px solid #a98;
+  border-radius: 3px;
+  padding: 0 12px 0 12px;
+  margin: 6px 0;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+  line-height: 2;
+}
+.Card h3 {
+  color: #765;
+  margin: 6px 0;
+  line-height: 2;
+}
+.Card p {
+  margin: 6px 0;
+}
+.AddCard {
+  padding: 6px;
+  margin: 18px 0 11px;
+  border: 1px solid #765;
+  border-radius: 3px;
+  background: #a98;
+  background-image: linear-gradient(#a98, #765);
+  text-shadow: 0px -1px 0px rgba(0,0,0,0.15);
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+.AddCard:hover {
+  background: #765;
+}
+.AddCard:active {
+  background: #432;
+}
+.EmptyCardContent {
+  color: #999;
+}
