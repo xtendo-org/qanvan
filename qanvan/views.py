@@ -34,8 +34,22 @@ def card_lists(board_id):
     if request.method == 'POST':
         # 새로운 카드리스트를 만듭니다.
         name = required_field(request.get_json(), 'name')
-        l = CardList(board_id, name)
-        db.session.add(l)
+
+        target = db.session.query(
+            db.func.coalesce(CardList.priority, CardList.id) + 1
+        ).filter(
+            CardList.board_id == board_id
+        ).order_by(
+            -db.func.coalesce(CardList.priority, CardList.id)
+        ).limit(1).subquery().as_scalar()
+
+        db.session.execute(
+            CardList.__table__.insert().values(
+                board_id=board_id,
+                name=name,
+                priority=target,
+            )
+        )
         db.session.commit()
         # TODO: 없는 board_id에 대한 요청일 경우 적절한 안내가 필요할까?
     return list_of_cardlists(board_id)
