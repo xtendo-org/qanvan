@@ -35,34 +35,76 @@ function commonPost(given: React, url: string, data: string) {
   });
 }
 
+function commonPut(given: React, url: string, data: string) {
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    contentType: 'application/json',
+    type: 'PUT',
+    data: data,
+    success: function(data) {
+      given.setState(data['result']);
+    }.bind(given),
+    error: function(xhr, status, err) {
+      console.error(url, status, err.toString());
+    }.bind(given)
+  });
+}
+
+var Card: React = React.createClass({
+  getInitialState: function() {
+    return ({
+      id: this.props.id,
+      title: this.props.title,
+      content: this.props.content
+    });
+  },
+  handleDragStart: function(e) {
+    e.dataTransfer.setData('card', true);
+    e.dataTransfer.setData('key', this.props.id);
+    e.target.style.opacity = .5;
+    // 여기서 드래그 시작할 때 마우스 포인터의 위치가 카드의 중심으로부터
+    // 얼마나 이탈했는지를 저장해야 함
+  },
+  handleTitleClick: function(e) {
+    var newTitle: string = prompt('카드 제목', this.state.title);
+    if (newTitle !== null && newTitle !== '') {
+      commonPut(this, `/card/${this.props.id}`, `{"title": "${newTitle}"}`);
+    }
+  },
+  render: function() {
+    var given = this;
+    var myClassName: string = this.state.content ?
+      'CardContent' : 'EmptyCardContent';
+    return (
+      <div
+        onDragStart={this.handleDragStart}
+        draggable='true'
+        className='Card'
+      >
+        <h3 onClick={this.handleTitleClick}>{this.state.title}</h3>
+        <p className={myClassName}>
+          {this.state.content || '(내용 없음)'}
+        </p>
+      </div>
+    );
+  }
+});
+
 var Cards: React = React.createClass({
   render: function() {
     if (this.props.data.length === 0) {
       return <div />;
     }
-    var handleDragStart = function(e) {
-      e.dataTransfer.setData('card', true);
-      // e.dataTransfer.setData('key', given.props.id);
-      e.target.style.opacity = .5;
-      var offsetLeft = $(e.target).offset().left - $(window).scrollLeft();
-      // 드래그 시작할 때 마우스 포인터의 위치가 카드의 중심으로부터
-      // 얼마나 이탈했는지를 저장
-      e.dataTransfer.setData('offset',
-        e.clientX - (e.target.clientWidth / 2 + offsetLeft));
-    };
     var cards = this.props.data.map(function(card) {
       return (
-        <div
-          onDragStart={handleDragStart}
-          draggable='true'
-          className='Card'
+        <Card
           key={card.id}
-        >
-          <h3>{card.title}</h3>
-          <p className={card.content ? 'CardContent' : 'EmptyCardContent'}>
-            {card.content ? card.content : '(내용 없음)'}
-          </p>
-        </div>
+          id={card.id}
+          title={card.title}
+          content={card.content}
+          priority={card.priority}
+        />
       );
     });
     return <div>{cards}</div>;
@@ -138,7 +180,6 @@ var CardList: React = React.createClass({
         onDragOver={e => e.preventDefault()}
         onDragEnter={e => e.preventDefault()}
         onDrop={handleDrop}
-        key='{this.props.id}'
       >
         <div
           className='CardListReal'
@@ -214,7 +255,7 @@ var CardLists: React = React.createClass({
     return (
       <div id='MainArea'>
         <h1>{this.props.chosen_board_name}</h1>
-        <div id='CardListArea' key={this.props.chosen_board}>
+        <div id='CardListArea'>
           {card_lists}
           <div
             className='CardListDropZone'

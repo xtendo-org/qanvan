@@ -114,6 +114,26 @@ def cards(list_id):
     ])
 
 
+@blueprint.route('/card/<card_id>', methods=['PUT'])
+def card(card_id):
+    data = request.get_json()
+    title = data.get('title')
+    if title is not None:
+        db.session.execute(
+            Card.__table__.update().where(
+                Card.__table__.c.id == card_id
+            ).values(title=title)
+        )
+    db.session.commit()
+    result = db.session.query(
+        Card.id,
+        db.func.coalesce(Card.priority, Card.id).label('priority'),
+        Card.title,
+        Card.content
+    ).filter_by(id=card_id).limit(1)[0]
+    return jsonify(result=dict(zip(result.keys(), result)))
+
+
 def required_field(d, key):
     r = d.get(key)
     if r is None:
