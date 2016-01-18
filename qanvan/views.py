@@ -119,9 +119,25 @@ def cards(list_id):
         data = request.get_json()
         title = required_field(data, 'title')
         content = data.get('content', '')
-        c = Card(list_id, title, content)
-        db.session.add(c)
+
+        target = db.session.query(
+            db.func.coalesce(Card.priority, Card.id) + 1
+        ).filter(
+            Card.card_list_id == list_id
+        ).order_by(
+            -db.func.coalesce(Card.priority, Card.id)
+        ).limit(1).subquery().as_scalar()
+
+        db.session.execute(
+            Card.__table__.insert().values(
+                card_list_id=list_id,
+                title=title,
+                content=content,
+                priority=target,
+            )
+        )
         db.session.commit()
+
     return jsonify(result=[
         dict(zip(row.keys(), row)) for row in
         db.session.query(
