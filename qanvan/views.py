@@ -124,6 +124,14 @@ def card(card_id):
                 Card.__table__.c.id == card_id
             ).values(title=title)
         )
+    else:
+        content = data.get('content')
+        if content is not None:
+            db.session.execute(
+                Card.__table__.update().where(
+                    Card.__table__.c.id == card_id
+                ).values(content=content)
+            )
     db.session.commit()
     result = db.session.query(
         Card.id,

@@ -72,6 +72,12 @@ var Card: React = React.createClass({
       commonPut(this, `/card/${this.props.id}`, `{"title": "${newTitle}"}`);
     }
   },
+  handleContentClick: function(e) {
+    var newCon: string = prompt('카드 내용', this.state.content);
+    if (newCon !== null && newCon !== '') {
+      commonPut(this, `/card/${this.props.id}`, `{"content": "${newCon}"}`);
+    }
+  },
   render: function() {
     var given = this;
     var myClassName: string = this.state.content ?
@@ -83,7 +89,7 @@ var Card: React = React.createClass({
         className='Card'
       >
         <h3 onClick={this.handleTitleClick}>{this.state.title}</h3>
-        <p className={myClassName}>
+        <p onClick={this.handleContentClick} className={myClassName}>
           {this.state.content || '(내용 없음)'}
         </p>
       </div>
