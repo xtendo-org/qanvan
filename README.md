@@ -1,7 +1,6 @@
 ## 테스트 환경
 
-- 3.4.3
-- 3.5.1
+- Python 3.5.1
 
 ## 안내
 
@@ -12,16 +11,15 @@ git clone https://github.com/kinoru/qanvan
 cd qanvan
 ```
 
-### 자바스크립트 설정
+### 프론트엔드 설정
 
-TODO
-
-[Flow], [Babel], [React], [Webpack]을 씁니다.
+[Flow], [Babel], [React], [Webpack], [Stylus]를 씁니다.
 
 [Flow]: http://flowtype.org/
 [Babel]: https://babeljs.io/
 [React]: https://facebook.github.io/react/
 [Webpack]: https://webpack.github.io/
+[Stylus]: http://stylus-lang.com/
 
 먼저 종속성 패키지를 설치합니다.
 
@@ -62,9 +60,9 @@ pip install -r requirements.txt
 
 ### 데이터베이스 설정
 
-TODO
+`config.toml`을 적절히 수정해 줍니다. SQLAlchemy의 엔진 설정 문자열을 씁니다.
 
-`config.toml`을 적절히 수정합니다.
+예시: `postgresql://scott:tiger@localhost:5432/mydatabase`
 
 ### 실행
 
