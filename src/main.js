@@ -302,7 +302,7 @@ var CardList: React = React.createClass({
             onDragOver={e => e.preventDefault()}
             onDragEnter={e => e.preventDefault()}
             onDrop={this.handleCardDrop}
-          >카드 추가</div>
+          >새 카드</div>
         </div>
       </div>
     );
@@ -380,7 +380,7 @@ var CardLists: React = React.createClass({
             onDragEnter={e => e.preventDefault()}
           >
             <div className='CardListReal'>
-              <div className='AddList' onClick={addCardList}>리스트 추가</div>
+              <div className='AddList' onClick={addCardList}>새 리스트</div>
             </div>
           </div>
         </div>
@@ -420,7 +420,7 @@ var BoardList: React = React.createClass({
         <ul>
           {boardNodes}
         </ul>
-        <div className='AddBoard' onClick={addBoard}>보드 추가</div>
+        <div className='AddBoard' onClick={addBoard}>새 보드</div>
       </div>
     );
   }
