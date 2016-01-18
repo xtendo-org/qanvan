@@ -119,12 +119,15 @@ h1,h2,h3,h4,h5,h6
 
     positive-button()
 
+.CardDropZone
+    padding 1px 0
+
 .Card
     background #FBF6DD
     border 1px solid #A98
     border-radius 3px
     padding 0 12px 0 12px
-    margin 0 0 12px 0
+    margin 6px 0
     box-shadow 0 5px 10px rgba(0xff,0xff,0xff,0.5)
 
     line-height 2

@@ -142,6 +142,41 @@ def card(card_id):
     return jsonify(result=dict(zip(result.keys(), result)))
 
 
+@blueprint.route('/card/swap', methods=['POST'])
+def swap_card():
+    data = request.get_json()
+    list_id = required_field(data, 'list_id')
+    source = required_field(data, 'source')
+    target = required_field(data, 'target')
+    if target == 0:  # 0은 맨 뒤에다 끼워넣으려는 경우입니다.
+        target = db.session.query(
+            db.func.coalesce(Card.priority, Card.id) + 1
+        ).filter(
+            Card.card_list_id == list_id
+        ).order_by(
+            -db.func.coalesce(Card.priority, Card.id)
+        ).limit(1).subquery().as_scalar()
+    else:
+        db.session.execute(
+            Card.__table__.update(
+            ).where(
+                db.func.coalesce(Card.priority, Card.id) >= target
+            ).where(
+                Card.card_list_id == list_id
+            ).values(
+                priority=db.func.coalesce(Card.priority, Card.id) + 1
+            )
+        )
+    db.session.execute(
+        Card.__table__.update(
+        ).where(
+            Card.__table__.c.id == source
+        ).values(priority=target, card_list_id=list_id)
+    )
+    db.session.commit()
+    return jsonify(result='ok')
+
+
 def required_field(d, key):
     r = d.get(key)
     if r is None:

@@ -61,10 +61,48 @@ var Card: React = React.createClass({
   },
   handleDragStart: function(e) {
     e.dataTransfer.setData('card', true);
-    e.dataTransfer.setData('key', this.props.id);
+    e.dataTransfer.setData('card_key', this.props.id);
     e.target.style.opacity = .5;
-    // 여기서 드래그 시작할 때 마우스 포인터의 위치가 카드의 중심으로부터
-    // 얼마나 이탈했는지를 저장해야 함
+    // 드래그 시작할 때 마우스 포인터의 위치가 카드의 중심으로부터
+    // 얼마나 이탈했는지를 저장
+    var offsetTop: number = $(e.target).offset().top - $(window).scrollTop();
+    var centerLine: number = e.target.clientHeight / 2 + offsetTop;
+    e.dataTransfer.setData('offset', e.clientY - centerLine);
+  },
+  handleDrop: function(e) {
+    var key = e.dataTransfer.getData('card_key');
+    if (!e.dataTransfer.getData('card')) {
+      return;
+    }
+    if (key == this.props.id) {
+      return;
+    }
+    // 카드 드랍 존의 윗쪽 절반에 떨어지면 위에 넣기,
+    // 아랫쪽 절반에 떨어지면 아래에 넣기
+    var offsetTop = $(e.target).offset().top - $(window).scrollTop();
+    var priority =
+      (e.target.clientHeight / 2 + offsetTop < e.clientY -
+        e.dataTransfer.getData('offset')) ?
+      this.props.priority + 1 : this.props.priority;
+    var url: string = '/card/swap';
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      contentType: 'application/json',
+      type: 'POST',
+      data: JSON.stringify({
+        list_id: this.props.list_id,
+        source: key,
+        target: priority
+      }),
+      success: function(data) {
+        this.props.board_update();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
+
   },
   handleTitleClick: function(e) {
     var newTitle: string = prompt('카드 제목', this.state.title);
@@ -84,14 +122,21 @@ var Card: React = React.createClass({
       'CardContent' : 'EmptyCardContent';
     return (
       <div
-        onDragStart={this.handleDragStart}
-        draggable='true'
-        className='Card'
+        className='CardDropZone'
+        onDragOver={e => e.preventDefault()}
+        onDragEnter={e => e.preventDefault()}
+        onDrop={this.handleDrop}
       >
-        <h3 onClick={this.handleTitleClick}>{this.state.title}</h3>
-        <p onClick={this.handleContentClick} className={myClassName}>
-          {this.state.content || '(내용 없음)'}
-        </p>
+        <div
+          onDragStart={this.handleDragStart}
+          draggable='true'
+          className='Card'
+        >
+          <h3 onClick={this.handleTitleClick}>{this.state.title}</h3>
+          <p onClick={this.handleContentClick} className={myClassName}>
+            {this.state.content || '(내용 없음)'}
+          </p>
+        </div>
       </div>
     );
   }
@@ -102,6 +147,8 @@ var Cards: React = React.createClass({
     if (this.props.data.length === 0) {
       return <div />;
     }
+    var list_id = this.props.list_id;
+    var board_update = this.props.board_update;
     var cards = this.props.data.map(function(card) {
       return (
         <Card
@@ -110,6 +157,8 @@ var Cards: React = React.createClass({
           title={card.title}
           content={card.content}
           priority={card.priority}
+          list_id={list_id}
+          board_update={board_update}
         />
       );
     });
@@ -127,8 +176,9 @@ var CardList: React = React.createClass({
   render: function() {
     var given = this;
     var addCard = function(e) {
-      var newTitle = prompt('새 카드 제목');
-      if (newTitle !== null) {
+
+      var newTitle: string = prompt('새 카드 제목');
+      if (newTitle !== null && newTitle !== '') {
         commonPost(given, '/list/' + given.props.id,
           `{"title": "${newTitle}"}`);
       }
@@ -149,11 +199,9 @@ var CardList: React = React.createClass({
     var handleDrop = function(e) {
       var key = e.dataTransfer.getData('key');
       if (e.dataTransfer.getData('card')) {
-        console.log('rejecting card');
         return;
       }
       if (!e.dataTransfer.getData('card_list')) {
-        console.log('rejecting non card_list');
         return;
       }
       if (key == given.props.id) {
@@ -196,7 +244,11 @@ var CardList: React = React.createClass({
           <h2>
             {this.props.name}
           </h2>
-          <Cards data={this.state.data} />
+          <Cards
+            list_id={this.props.id}
+            board_update={this.props.board_update}
+            data={this.state.data}
+          />
           <div className='AddCard' onClick={addCard}>카드 추가</div>
         </div>
       </div>
@@ -214,6 +266,9 @@ var CardLists: React = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     commonGet(this, '/board/' + nextProps.chosen_board);
   },
+  handleWholeUpdate: function() {
+    commonGet(this, '/board/' + this.props.chosen_board);
+  },
   render: function() {
     if (this.props.chosen_board === 0) {
       return <div id='MainArea' className='welcome' />
@@ -222,6 +277,7 @@ var CardLists: React = React.createClass({
     var handleListSwap = function(card_lists) {
       given.setState({data: card_lists});
     }
+    var board_update = this.handleWholeUpdate;
     var card_lists = this.state.data.map(function(card_list) {
       return <CardList
         id={card_list.id}
@@ -229,12 +285,13 @@ var CardLists: React = React.createClass({
         priority={card_list.priority}
         name={card_list.name}
         board={given.props.chosen_board}
+        board_update={board_update}
         list_swap={handleListSwap}
       />
     });
     var addCardList = function(e) {
-      var newName = prompt('새 리스트 이름');
-      if (newName !== null) {
+      var newName: string = prompt('새 리스트 이름');
+      if (newName !== null && newName !== '') {
         commonPost(given, '/board/' + given.props.chosen_board,
           `{"name": "${newName}"}`);
       }
